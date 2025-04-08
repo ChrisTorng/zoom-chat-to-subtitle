@@ -127,7 +127,10 @@ class ZoomChat2Txt:
             
             print(i+1)
             print(f"{ts0_hours:02d}:{ts0_minutes:02d}:{ts0_seconds:02d},000  -->  {ts1_hours:02d}:{ts1_minutes:02d}:{ts1_seconds:02d},{ts1ms}")
-            print(f"<b>{self.users[i]}</b>: {self.messages[i]}", end="\n\n")
+            message = self.messages[i]
+            if message.startswith("Replying to "):
+                message = message[len("Replying to "):]
+            print(f"{self.users[i]}: {message}", end="\n\n")
             
     def save_srt(self, file_path):
         with open(file_path, 'w+', encoding='utf-8') as f:
