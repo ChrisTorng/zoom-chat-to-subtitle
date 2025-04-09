@@ -1,13 +1,15 @@
 import re
 import os
+import sys
 from datetime import datetime, date, time, timedelta
 
 class ZoomChat2Txt:
-    def __init__(self, file_path):
+    def __init__(self, file_path, start_time_str=None):
         self.text = ''
         self.start_hour = None
         self.start_minute = None
         self.start_second = None
+        self.start_time_str = start_time_str
         self.meeting_start_time = None
         self.file_path = file_path
         self.ts0 = [] # timestamp start
@@ -17,14 +19,48 @@ class ZoomChat2Txt:
         self.messages = []
         self.load_file(file_path)
         
+    def parse_start_time_str(self):
+        """Parse start time string in format h:m:s.f"""
+        try:
+            # Split by colon for hours, minutes, seconds
+            parts = self.start_time_str.split(':')
+            if len(parts) != 3:
+                print(f"Invalid time format: {self.start_time_str}, should be h:m:s.f")
+                return False
+                
+            hours = int(parts[0])
+            minutes = int(parts[1])
+            
+            # Handle seconds with optional milliseconds
+            if '.' in parts[2]:
+                seconds_parts = parts[2].split('.')
+                seconds = int(seconds_parts[0])
+                # We don't use milliseconds in this implementation
+            else:
+                seconds = int(parts[2])
+                
+            self.start_hour = hours
+            self.start_minute = minutes
+            self.start_second = seconds
+            self.meeting_start_time = time(hours, minutes, seconds)
+            print(f"Using provided start time: {hours:02d}:{minutes:02d}:{seconds:02d}")
+            return True
+        except Exception as e:
+            print(f"Error parsing start time: {e}")
+            return False
+            
     def set_start_hour(self):
-        # Get meeting start time, if not available from folder name, use the hour of the first message
-        if not self.extract_meeting_start_time():
-            self.start_hour = self.ts0[0].hour
-            self.start_minute = 0
-            self.start_second = 0
-            self.meeting_start_time = time(self.start_hour, self.start_minute, self.start_second)
-            print(f"Could not get meeting start time from folder name, using the hour of the first message: {self.start_hour}:00:00")
+        # First try to use the provided start_time_str if available
+        if self.start_time_str and self.parse_start_time_str():
+            return
+            
+        # Next try to get meeting start time from folder name
+        if self.extract_meeting_start_time():
+            return
+            
+        # If both methods failed, show error and exit
+        print("Error: Unable to determine start time. Please provide a start time parameter or ensure the folder name contains time information.")
+        sys.exit(1)
     
     def extract_meeting_start_time(self):
         """Extract meeting start time from the folder name in the file path"""
@@ -128,8 +164,8 @@ class ZoomChat2Txt:
             print(i+1)
             print(f"{ts0_hours:02d}:{ts0_minutes:02d}:{ts0_seconds:02d},000  -->  {ts1_hours:02d}:{ts1_minutes:02d}:{ts1_seconds:02d},{ts1ms}")
             message = self.messages[i]
-            if message.startswith("Replying to "):
-                message = message[len("Replying to "):]
+            #if message.startswith("Replying to "):
+            #    message = message[len("Replying to "):]
             print(f"{self.users[i]}: {message}", end="\n\n")
             
     def save_srt(self, file_path):

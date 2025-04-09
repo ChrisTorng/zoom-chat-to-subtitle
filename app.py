@@ -23,6 +23,9 @@ def home():
     *filename, ext = f.filename.split('.')
     filename = '.'.join(filename)
 
+    # get start time if provided
+    start_time = request.form.get('start_time', None)
+    
     # set session using uuid
     uuid_session = uuid.uuid4()
     session['file'] = str(uuid_session)
@@ -32,14 +35,15 @@ def home():
 
     if filename == '':
       # raise Exception("You havent choose your file yet!")
-      flash("You havent choose your file yet!", 'error')
+      flash("You haven't chosen your file yet!", 'error')
       return redirect(request.url)
     
     if ext.lower() != 'txt':
       raise Exception("Only support txt file")
     f.save(f"uploads/{uuid_session}.{ext}")
 
-    zoomchat2sub = ZoomChat2Txt(f"uploads/{uuid_session}.{ext}")
+    # Pass the start_time parameter if provided
+    zoomchat2sub = ZoomChat2Txt(f"uploads/{uuid_session}.{ext}", start_time)
     zoomchat2sub.save_srt(f"uploads/{uuid_session}.srt")
 
     # delete txt file
