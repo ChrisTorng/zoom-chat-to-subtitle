@@ -19,3 +19,4 @@
     ZoomChat2Srt: error: unrecognized arguments: 19:31:15
    ```
 7. Agent: 將所有中文都改為英文，包括註解。
+8. Agent: 我要加入一個選擇性參數 -l，若未指定則為英文 (亦即不轉換)，若有指定 zh-tw，則額外執行轉換: "Replying to " 轉為 "回覆 "；"Reacted to \"*\" with ?" 轉為 "對 \"*\" 比 ?"

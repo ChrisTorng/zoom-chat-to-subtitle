@@ -4,7 +4,7 @@ import sys
 from datetime import datetime, date, time, timedelta
 
 class ZoomChat2Txt:
-    def __init__(self, file_path, start_time_str=None):
+    def __init__(self, file_path, start_time_str=None, language=None):
         self.text = ''
         self.start_hour = None
         self.start_minute = None
@@ -12,6 +12,7 @@ class ZoomChat2Txt:
         self.start_time_str = start_time_str
         self.meeting_start_time = None
         self.file_path = file_path
+        self.language = language
         self.ts0 = [] # timestamp start
         self.ts1 = [] # timestamp end
         self.delays = [] # t1 - t2 in ms
@@ -87,10 +88,28 @@ class ZoomChat2Txt:
         for t in temp:
             self.ts0.append(self.txt_to_time(t))
          
+    def translate_message(self, message):
+        """
+        翻譯訊息中的特定英文模式為中文
+        - "Replying to " 轉為 "回覆 "
+        - "Reacted to \"*\" with ?" 轉為 "對 \"*\" 比 ?"
+        """
+        if self.language != 'zh-tw':
+            return message
+            
+        # 替換 "Replying to " 為 "回覆 "
+        message = re.sub(r'Replying to ', r'回覆 ', message)
+        
+        # 替換 "Reacted to "*" with ?" 為 "對 "*" 比 ?"
+        message = re.sub(r'Reacted to "(.*?)" with (.*)', r'對 "\1" 比 \2', message)
+        
+        return message
+        
     def extract_messages(self):
         messages = re.split("\d{2}:\d{2}:\d{2}\s.+?:", self.text)
         messages.pop(0) # remove the first empty element
-        self.messages = [m.strip() for m in messages]
+        # 對每個訊息套用語言翻譯
+        self.messages = [self.translate_message(m.strip()) for m in messages]
         
     def extract_users(self):
         users = re.findall("\d{2}:\d{2}:\d{2}\s(.+?):", self.text)
@@ -164,8 +183,7 @@ class ZoomChat2Txt:
             print(i+1)
             print(f"{ts0_hours:02d}:{ts0_minutes:02d}:{ts0_seconds:02d},000  -->  {ts1_hours:02d}:{ts1_minutes:02d}:{ts1_seconds:02d},{ts1ms}")
             message = self.messages[i]
-            if message.startswith("Replying to "):
-                message = message[len("Replying to "):]
+
             print(f"{self.users[i]}: {message}", end="\n\n")
             
     def save_srt(self, file_path):
@@ -189,7 +207,7 @@ class ZoomChat2Txt:
                 f.write("\n")
                 f.write(f"{ts0_hours:02d}:{ts0_minutes:02d}:{ts0_seconds:02d},000  -->  {ts1_hours:02d}:{ts1_minutes:02d}:{ts1_seconds:02d},{ts1ms}")
                 f.write("\n")
-                f.write(f"<b>{self.users[i]}</b>: {self.messages[i]}")
+                f.write(f"{self.users[i]}: {self.messages[i]}")
                 f.write("\n")
                 f.write("\n")
             f.close()

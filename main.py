@@ -15,6 +15,14 @@ parser.add_argument(
 )
 
 parser.add_argument(
+  '-l',
+  '--language',
+  type= str,
+  default= None,
+  help= "Optional language code, e.g. zh-tw for Traditional Chinese translation"
+)
+
+parser.add_argument(
   metavar="file_path",
   type=str,
   dest="file_path",
@@ -40,8 +48,7 @@ if __name__ == "__main__":
   file_name, ext = split_filename_and_ext(args.file_path)
   if ext.lower() != 'txt':
     raise Exception("Sorry, this app supports txt file only. Please check your file extension")
-
-  zchat2srt = ZoomChat2Txt(args.file_path, args.start_time)
+  zchat2srt = ZoomChat2Txt(args.file_path, args.start_time, args.language)
 
   if args.output_path:
     file_name, ext = split_filename_and_ext(args.output_path)
