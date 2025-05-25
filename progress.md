@@ -20,3 +20,11 @@
    ```
 7. Agent: 將所有中文都改為英文，包括註解。
 8. Agent: 我要加入一個選擇性參數 -l，若未指定則為英文 (亦即不轉換)，若有指定 zh-tw，則額外執行轉換: "Replying to " 轉為 "回覆 "；"Reacted to \"*\" with ?" 轉為 "對 \"*\" 比 ?"
+
+Claude Sonnet 4/Ask:
+Claude Sonnet 3.7:
+GPT-4.1:
+9. 請更新 README.md，依目前的 main.py 功能補充參數，包括 -l 及讀取資料夾起始時間或輸入參數起始時間的機制。
+
+Claude Sonnet 4/Agent:
+10. 請更新 README.md，全部撰寫英文。依目前的 main.py 功能補充參數，包括 -l 及讀取資料夾起始時間或輸入參數起始時間的機制。
