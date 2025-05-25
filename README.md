@@ -4,14 +4,14 @@ This repo is a fork from [rasyidev/zoom-chat-to-subtitle](https://github.com/ras
 
 # Zoom Chat to Subtitle
 Convert Zoom's saved meeting chat (txt) into subtitle file (srt). Using this tool, the recorded Zoom Video can be played along with the chat as a subtitle.
-![](https://raw.githubusercontent.com/rasyidev/zoom-chat-to-subtitle/main/demo-zoom-chat-to-subtitle.gif)
+![](https://raw.githubusercontent.com/ChrisTorng/zoom-chat-to-subtitle/main/demo-zoom-chat-to-subtitle.gif)
 
 ## Installation
 
 ### Clone This Repository
 
 ```
-git clone https://github.com/rasyidev/zoom-chat-to-subtitle.git
+git clone https://github.com/ChrisTorng/zoom-chat-to-subtitle.git
 ```
 
 ### Change Directory to The Project
